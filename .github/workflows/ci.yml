@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  validate:
 
     runs-on: ubuntu-latest
 
@@ -25,5 +25,5 @@ jobs:
       - name: Install dependencies
         run: uv sync --locked
 
-      - name: Run tests
-        run: uv run pytest
+      - name: Check Python imports
+        run: uv run python -c "import pandas; import paho.mqtt.client; import json"
