@@ -7,4 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "pandas",
     "paho-mqtt",
+    "sqlalchemy>=2.0.52",
+    "psycopg2-binary>=2.9.12",
+    "python-dotenv>=1.2.2",
 ]
