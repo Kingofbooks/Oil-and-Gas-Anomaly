@@ -1,0 +1,12 @@
+numpy
+pandas
+python-dotenv
+
+paho-mqtt
+asyncua
+
+SQLAlchemy
+psycopg2-binary
+
+streamlit
+plotly
