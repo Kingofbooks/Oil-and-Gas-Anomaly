@@ -10,3 +10,6 @@ psycopg2-binary
 
 streamlit
 plotly
+
+# .\mosquitto -v -c mosquitto.conf 
+# uv run python -m mqtt.subscriber

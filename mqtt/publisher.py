@@ -3,15 +3,17 @@ import paho.mqtt.client as mqtt
 import json
 import time
 from pathlib import Path
-
+from config import Settings
 class MqttPublisher:
     def __init__(self):
         self.csv_path = Path(
             r"F:\Ecrio_Company!\sample_project_1- Oil & Gas\oil gas anomaly\data\sensor_500.csv"
         )
+        self.setting=Settings()
+        
     def connect(self):
         client=mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-        client.connect("localhost", 1883)
+        client.connect(self.setting.mqtt_broker_host,self.setting.mqtt_broker_port)
         
         return client
     

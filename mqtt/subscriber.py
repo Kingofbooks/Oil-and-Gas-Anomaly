@@ -1,7 +1,9 @@
 import json
 import paho.mqtt.client as mqtt
-
-
+from datetime import datetime, timezone
+from database.connection import ConnectionDB
+from database.repository import SensorRepository
+from config import Settings
 REQUIRED_FIELDS = {
     "timestamp",
     "operating_phase",
@@ -30,12 +32,17 @@ NUMERIC_FIELDS = {
 class MqttSubscriber:
 
     def __init__(self):
-        self.client = mqtt.Client(
-            mqtt.CallbackAPIVersion.VERSION2
-        )
+        self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
         self.client.on_message = self.on_message
-        self.client.connect("localhost",1883)
-        self.client.subscribe("oilgas/WELL-001/sensors")
+        self.settings = Settings()
+        self.client.connect(
+            self.settings.mqtt_broker_host,
+            self.settings.mqtt_broker_port
+        )
+        self.subscribe_data = self.settings.mqtt_topic
+        self.client.subscribe(self.subscribe_data)
+        self.db = ConnectionDB()
+        self.repository = SensorRepository(self.db)
 
     def decode_message(self, payload):
         text = payload.decode()
@@ -75,13 +82,53 @@ class MqttSubscriber:
             print("dhsv must be 0 or 1")
             return False
 
-        return True
+        if not isinstance(data["operating_phase"], str):
+            print("operating_phase must be a string")
+            return False
+        
+        if data["ground_truth_anomaly"] not in (0, 1):
+            print("ground_truth_anomaly must be 0 or 1")
+            return False
+        
+        try:
+            datetime.fromisoformat(data["timestamp"])
+        except ValueError:
+            print("timestamp must be a valid ISO datetime")
+            return False
 
+        return True
+    def prepare_reading(self, data):
+        well_id = self.subscribe_data.split("/")[1]
+        timestamp = datetime.fromisoformat(data["timestamp"]).replace(tzinfo=timezone.utc)
+        reading = {
+            "well_id": well_id,
+
+            "timestamp": timestamp,
+
+            "received_at": datetime.now(timezone.utc),
+
+            "pressure": data["pressure"],
+            "temperature": data["temperature"],
+            "flow_rate": data["flow_rate"],
+
+            "production_choke": data["production_choke"],
+            "gas_lift_choke": data["gas_lift_choke"],
+
+            "production_valve": data["production_valve"],
+            "dhsv": data["dhsv"],
+
+            "source": "mqtt"
+        }
+
+        return reading
+    
     def process_reading(self, data):
-        print("Valid sensor reading")
-        print("Pressure:", data["pressure"])
-        print("Temperature:", data["temperature"])
-        print("Flow rate:", data["flow_rate"])
+        reading_data = self.prepare_reading(data)
+
+        reading = self.repository.save_sensor_reading(reading_data)
+
+        print("Sensor reading saved")
+        print("Reading ID:", reading.id)
 
     def on_message(self, client, userdata, message):
         try:
