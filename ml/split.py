@@ -1,21 +1,11 @@
 import pandas as pd
 
 
-def split_real_instances(
-    metadata: pd.DataFrame,
-    train_ratio: float = 0.70,
-    validation_ratio: float = 0.15,
-    random_state: int = 42,
-):
-    real = metadata[
-        metadata["source"] == "real"
-    ].copy()
+def split_real_instances(metadata: pd.DataFrame,train_ratio: float = 0.70,validation_ratio: float = 0.15,random_state: int = 42):
+    real = metadata[metadata["source"] == "real"].copy()
 
     well_counts = (
-        real.groupby("well_id")
-        .size()
-        .sort_values(ascending=False)
-    )
+        real.groupby("well_id").size().sort_values(ascending=False))
 
     # Three buckets of well IDs
     splits = {

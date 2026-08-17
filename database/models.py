@@ -13,26 +13,56 @@ class SensorReading(Base):
     id: Mapped[int] = mapped_column(BigInteger,primary_key=True)
 
     well_id: Mapped[str] = mapped_column(String(50),nullable=False)
-    
-    pressure: Mapped[float] = mapped_column(Float,nullable=False)
 
-    temperature: Mapped[float] = mapped_column(Float,nullable=False)
-
-    flow_rate: Mapped[float] = mapped_column(Float,nullable=False)
-
-    production_choke: Mapped[float] = mapped_column(Float,nullable=False)
-
-    gas_lift_choke: Mapped[float] = mapped_column(Float,nullable=False)
-    
-    production_valve: Mapped[int] = mapped_column(SmallInteger,nullable=False)
-    
-    dhsv: Mapped[int] = mapped_column(SmallInteger,nullable=False)
-    
     timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True),nullable=False)
-    
+
     received_at: Mapped[datetime] = mapped_column(DateTime(timezone=True),nullable=False)
-    
+
     source: Mapped[str] = mapped_column(String(20),nullable=False)
+
+    ABER_CKGL: Mapped[float] = mapped_column(Float,nullable=False)
+
+    ABER_CKP: Mapped[float] = mapped_column(Float,nullable=False)
+
+    ESTADO_DHSV: Mapped[float] = mapped_column(Float,nullable=False)
+
+    ESTADO_M1: Mapped[float] = mapped_column(Float,nullable=False)
+
+    ESTADO_M2: Mapped[float] = mapped_column(Float,nullable=False)
+
+    ESTADO_PXO: Mapped[float] = mapped_column(Float,nullable=False)
+
+    ESTADO_SDV_GL: Mapped[float] = mapped_column(Float,nullable=False)
+
+    ESTADO_SDV_P: Mapped[float] = mapped_column(Float,nullable=False)
+
+    ESTADO_W1: Mapped[float] = mapped_column(Float,nullable=False)
+
+    ESTADO_W2: Mapped[float] = mapped_column(Float,nullable=False)
+
+    ESTADO_XO: Mapped[float] = mapped_column(Float,nullable=False)
+
+    P_ANULAR: Mapped[float] = mapped_column(Float,nullable=False)
+
+    P_JUS_CKGL: Mapped[float] = mapped_column(Float,nullable=False)
+
+    P_JUS_CKP: Mapped[float] = mapped_column(Float,nullable=False)
+
+    P_MON_CKP: Mapped[float] = mapped_column(Float,nullable=False)
+
+    P_PDG: Mapped[float] = mapped_column(Float,nullable=False)
+
+    P_TPT: Mapped[float] = mapped_column(Float,nullable=False)
+
+    QGL: Mapped[float] = mapped_column(Float,nullable=False)
+
+    T_JUS_CKP: Mapped[float] = mapped_column(Float,nullable=False)
+
+    T_MON_CKP: Mapped[float] = mapped_column(Float,nullable=False)
+
+    T_PDG: Mapped[float] = mapped_column(Float,nullable=False)
+
+    T_TPT: Mapped[float] = mapped_column(Float,nullable=False)
 
 
 class AnomalyResult(Base):

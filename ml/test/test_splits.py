@@ -11,6 +11,10 @@ DATASET_ROOT = Path(
 )
 
 
+# --------------------------------------------------
+# 1. Discover dataset
+# --------------------------------------------------
+
 dataset = ThreeWDataset(DATASET_ROOT)
 
 metadata = dataset.build_index()
@@ -19,7 +23,7 @@ records = [
     {
         "path": item.path,
         "well_id": item.well_id,
-        "folder_type": item.folder_type,
+        "event_class": item.folder_type,
         "source": item.source,
         "num_rows": item.num_rows,
         "start_time": item.start_time,
@@ -28,38 +32,126 @@ records = [
     for item in metadata
 ]
 
-df = pd.DataFrame(records)
-
-train, validation, test = split_real_instances(df)
+metadata_df = pd.DataFrame(records)
 
 
+# --------------------------------------------------
+# 2. Split
+# --------------------------------------------------
+
+train, validation, test = split_real_instances(
+    metadata_df
+)
+
+
+# --------------------------------------------------
+# 3. Basic split information
+# --------------------------------------------------
+
+print("=" * 70)
 print("TRAIN")
+print("=" * 70)
+
 print("Instances:", len(train))
 print("Wells:", train["well_id"].nunique())
 
-print("\nVALIDATION")
+
+print("\n" + "=" * 70)
+print("VALIDATION")
+print("=" * 70)
+
 print("Instances:", len(validation))
 print("Wells:", validation["well_id"].nunique())
 
-print("\nTEST")
+
+print("\n" + "=" * 70)
+print("TEST")
+print("=" * 70)
+
 print("Instances:", len(test))
 print("Wells:", test["well_id"].nunique())
 
-print("\nTotal real instances:")
-print(len(train) + len(validation) + len(test))
 
-print("\nTotal real wells:")
+# --------------------------------------------------
+# 4. Event-class distribution
+# --------------------------------------------------
+
+print("\n" + "=" * 70)
+print("EVENT CLASS DISTRIBUTION")
+print("=" * 70)
+
+
+print("\nTRAIN:")
 print(
-    train["well_id"].nunique()
-    + validation["well_id"].nunique()
-    + test["well_id"].nunique()
+    train["event_class"]
+    .value_counts()
+    .sort_index()
 )
 
-print("\nTrain wells:")
-print(sorted(train["well_id"].unique()))
 
-print("\nValidation wells:")
-print(sorted(validation["well_id"].unique()))
+print("\nVALIDATION:")
+print(
+    validation["event_class"]
+    .value_counts()
+    .sort_index()
+)
 
-print("\nTest wells:")
-print(sorted(test["well_id"].unique()))
+
+print("\nTEST:")
+print(
+    test["event_class"]
+    .value_counts()
+    .sort_index()
+)
+
+
+# --------------------------------------------------
+# 5. Check for well leakage
+# --------------------------------------------------
+
+train_wells = set(train["well_id"])
+validation_wells = set(validation["well_id"])
+test_wells = set(test["well_id"])
+
+
+print("\n" + "=" * 70)
+print("WELL LEAKAGE CHECK")
+print("=" * 70)
+
+print(
+    "Train ∩ Validation:",
+    train_wells & validation_wells
+)
+
+print(
+    "Train ∩ Test:",
+    train_wells & test_wells
+)
+
+print(
+    "Validation ∩ Test:",
+    validation_wells & test_wells
+)
+
+
+# --------------------------------------------------
+# 6. Check totals
+# --------------------------------------------------
+
+print("\n" + "=" * 70)
+print("TOTALS")
+print("=" * 70)
+
+print(
+    "Total split instances:",
+    len(train) + len(validation) + len(test)
+)
+
+print(
+    "Original real instances:",
+    len(
+        metadata_df[
+            metadata_df["source"] == "real"
+        ]
+    )
+)

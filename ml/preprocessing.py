@@ -23,9 +23,12 @@ class Preprocessor:
         ] 
     
     def handle_missing_values(self,df: pd.DataFrame,feature_columns: list[str]) -> pd.DataFrame:
+
         features = df[feature_columns].copy()
+        features = features.mask(features.abs() > 1e10)
+
         features = features.ffill()
-        features = features.bfill() 
+        features = features.bfill()
 
         return features
     
