@@ -1,0 +1,8 @@
+{
+    "model_name": "TranAD",
+    "model_version": "demo-v1",
+    "model_path": "artifacts/tranad_demo_v1.pt",
+    "window_size": 120,
+    "num_features": 22,
+    "threshold": 0.005179412059486259
+}

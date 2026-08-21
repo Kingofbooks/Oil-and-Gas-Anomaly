@@ -10,6 +10,15 @@ psycopg2-binary
 
 streamlit
 plotly
+fastapi
+uvicorn[standard]
 
-# .\mosquitto -v -c mosquitto.conf 
-# uv run python -m mqtt.subscriber
+# ============================================================
+# How to run all services : Instructions
+# ============================================================
+# Broker: .\mosquitto -v -c mosquitto.conf 
+# Subscriber: uv run python -m mqtt.subscriber
+# Publisher: uv run python -m mqtt.publisher
+# DB: psql -U postgres -d oil_gas_anomaly
+# Backend: uv run uvicorn api.main:app --reload
+# Frontend: npm run dev
